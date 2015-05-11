@@ -1,0 +1,1 @@
+var portfolioApp = angular.module('portfolioApp', ['mainCtrl', 'portfolioService', 'ui.bootstrap']);

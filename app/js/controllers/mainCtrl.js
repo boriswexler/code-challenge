@@ -57,7 +57,6 @@ angular.module('mainCtrl', [])
               getPortfolio($scope, $scope.portfolio.id, Portfolio);
               getAllPortfolios($scope, Portfolio);
                     $scope.transactionData = {};
-            alert($scope.transactionData);
             })
   
           

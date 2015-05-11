@@ -31,6 +31,7 @@ angular.module('mainCtrl', [])
             else {
               alert ('Symbol not found')
             }
+            $scope.transactionData = {};
           })
       }
 

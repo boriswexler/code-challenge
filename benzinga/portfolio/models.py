@@ -2,7 +2,7 @@ from django.db import models
 
 class Portfolio(models.Model):
     name = models.CharField(max_length=200)
-    balance = models.IntegerField(default=100000)
+    balance = models.FloatField(default=100000)
     updated_at = models.DateTimeField(auto_now = True)
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -34,6 +34,7 @@ class Transaction(models.Model):
 
 	    setattr(self.portfolio, 'balance', balance - cost)	    
 	    self.portfolio.save()
+
 	    positions = self.portfolio.positions.filter(symbol=self.symbol)
 	    if not positions:
 	    	position = Position(portfolio = self.portfolio, symbol = self.symbol, average_cost = self.price, num_shares = self.num_shares)

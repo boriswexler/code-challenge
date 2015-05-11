@@ -33,6 +33,8 @@ class TransactionViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
     
     queryset = Transaction.objects.all()
     serializer_class = TransactionSerializer
+    ordering = Transaction._meta.ordering
+
 
 
 def getQuote(self, *args, **kwargs):

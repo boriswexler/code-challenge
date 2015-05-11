@@ -1,5 +1,7 @@
 angular.module('portfolioService', [])
-  .constant("SERVER", "http://10.211.55.6:8000")
+  .constant("SERVER", "http://ec2-52-24-241-84.us-west-2.compute.amazonaws.com:8000")
+
+
   .factory('Transaction', function($http, SERVER) {
     return {
       get : function(portfolio) {

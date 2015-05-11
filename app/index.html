@@ -71,7 +71,7 @@
     <table class="table table-bordered" ng-hide="loading"> 
     <tr ><td class="col-md-1 text-left"><b>Date</b></td>  <td class="text-right col-md-1"><b> Type </b></td>  <td class="text-right col-md-1"><b> Shares</b></td>  <td class="text-right col-md-1"><b>Symbol</b> </td>  <td class="text-right col-md-1">
      <b>Price</b> </td></tr>
-      <tr ng-repeat="transaction in transactions | orderBy:'dates' "><td class="col-md-1 text-left">{{ transaction.dates | date:'MM/dd/yyyy' }}</td>  <td class="text-right col-md-1"> {{ transaction.transaction_type == 'B' ? 'Bought' : 'Sold' }} </td>  <td class="text-right col-md-1"> {{ transaction.num_shares }}</td>  <td class="text-right col-md-1">{{ transaction.symbol }} </td>  <td class="text-right col-md-1">
+      <tr ng-repeat="transaction in transactions "><td class="col-md-1 text-left">{{ transaction.dates | date:'MM/dd/yyyy' }}</td>  <td class="text-right col-md-1"> {{ transaction.transaction_type == 'B' ? 'Bought' : 'Sold' }} </td>  <td class="text-right col-md-1"> {{ transaction.num_shares }}</td>  <td class="text-right col-md-1">{{ transaction.symbol }} </td>  <td class="text-right col-md-1">
       ${{ transaction.price  | number:2}} </td></tr>
 
     </table>
@@ -91,11 +91,16 @@
 </div>
 
     <div class="col-md-7 ">
+    <form ng-submit="createPortfolio()"> 
       <div class="input-group">
             <input type="text" class="form-control input-sm" name="name" ng-model="portfolioData.name" placeholder="New portfolio">
             <span class="input-group-btn">
-     <button ng-click= "createPortfolio()" class="btn btn-primary btn-sm">Create</button>
-    </div></div></div>
+     <button type="Submit" class="btn btn-primary btn-sm">Create</button>
+
+    </div>
+       </form>
+    </div>
+    </div>
 
 
  <div>

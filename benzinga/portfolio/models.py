@@ -21,13 +21,11 @@ class Transaction(models.Model):
     price = models.FloatField(default=0)
     num_shares = models.IntegerField(default=0)
     dates = models.DateTimeField(auto_now_add=True)
+    class Meta:
+        ordering = ['-dates']
     
     def save(self, *args, **kwargs):
 	    balance = self.portfolio.balance
-	  #  	if self.transaction_type == 'B':	
-	    if self.price * self.num_shares > balance:
-	    	print 'transaction too large'
-	    	return
 	    if self.transaction_type == 'B':
 	    	cost = (self.price * self.num_shares)
 

@@ -5,8 +5,6 @@ angular.module('mainCtrl', [])
     $scope.positionData = {};
     $scope.portfolios = {};
     
-
-    // loading variable to show the spinning loading icon
     $scope.loading = true;
 
     Quote.get('F')
@@ -15,44 +13,25 @@ angular.module('mainCtrl', [])
         $scope.loading = false;
       });
 
-     Portfolio.get()
-     .success(function(data) {
-        $scope.portfolios = data;
-        $scope.loading = false;
-      });
+     
 
-    Portfolio.show(1)
-      .success(function(data) {
-        $scope.portfolio = data;
-        $scope.loading = false;
-      });
-
-
-    
-    // get all the transactions
-    Transaction.get(1)
-      .success(function(data) {
-        $scope.transactions = data;
-        $scope.loading = false;
-      });
-
-    Position.get(1)
-      .success(function(data) {
-        $scope.positions = data;
-        $scope.loading = false;
-      });
+    getAllPortfolios ($scope, Portfolio);
+    getPortfolio ($scope, 1, Portfolio);
+    getTransactions ($scope, 1, Transaction);
+    getPositions ($scope, 1, Position);
 
     
     $scope.getQuote = function() {
       Quote.get(angular.uppercase($scope.quoteRequest.symbol))
         .success(function(data) {
             if(data[angular.uppercase($scope.quoteRequest.symbol)]['symbol']) {
-              $scope.quote = data[angular.uppercase($scope.quoteRequest.symbol)];
-              $scope.quoteRequest = {};
+                $scope.quote = data[angular.uppercase($scope.quoteRequest.symbol)];
+                $scope.quoteRequest = {};
             }
-            else {alert ('Symbol not found')}
-
-            })
+            else {
+              alert ('Symbol not found')
+            }
+          })
       }
 
     $scope.loadPortfolio = function(id) {
@@ -60,16 +39,8 @@ angular.module('mainCtrl', [])
       Portfolio.show(id)
       .success(function(data) {
               $scope.portfolio = data;
-              Transaction.get($scope.portfolio.id)
-                .success(function(getData) {
-                  $scope.transactions = getData;
-                  $scope.loading = false;
-                });
-               Position.get($scope.portfolio.id)
-                .success(function(getData) {
-                  $scope.positions = getData;
-                  $scope.loading = false;
-                });
+              getTransactions ($scope, $scope.portfolio.id, Transaction);
+              getPositions ($scope, $scope.portfolio.id, Position);
             })
       }
 
@@ -79,23 +50,10 @@ angular.module('mainCtrl', [])
         .success(function(data) {
               $scope.portfolioData = {};
               $scope.portfolio = data;
-              // if successful, refresh positions and transactions
-              Transaction.get($scope.portfolio.id)
-                .success(function(getData) {
-                  $scope.transactions = getData;
-                  $scope.loading = false;
-                });
-               Position.get($scope.portfolio.id)
-                .success(function(getData) {
-                  $scope.positions = getData;
-                  $scope.loading = false;
-                });
-                Portfolio.get()
-               .success(function(data) {
-                  $scope.portfolios = data;
-                  $scope.loading = false;
-                });
-
+              getTransactions ($scope, $scope.portfolio.id, Transaction);
+              getPositions ($scope, $scope.portfolio.id, Position);
+              getPortfolio($scope, $scope.portfolio.id, Portfolio);
+              getAllPortfolios($scope, Portfolio);
             })
           
       }
@@ -106,14 +64,14 @@ angular.module('mainCtrl', [])
       $scope.transactionData.symbol = $scope.quote.symbol;
       positionsym = $scope.positions.filter(function (position) { return position.symbol == $scope.transactionData.symbol });
       if($scope.transactionData.num_shares <= 0 || !$scope.transactionData.num_shares) {
-        alert('Number of shares needs to be greater than zero.')
+          alert('Number of shares needs to be greater than zero.')
       }
       else if($scope.transactionData.transaction_type == 'S' &&
                 (positionsym[0].num_shares < $scope.transactionData.num_shares))   {
           alert('You can not sell more shares than you currently own')
       } 
       else if ($scope.transactionData.num_shares * $scope.transactionData.price > $scope.portfolio.balance) {
-        alert('Your cash balance does not allow for this transaction')
+          alert('Your cash balance does not allow for this transaction')
       }
       else {
           $scope.loading = true;
@@ -121,23 +79,8 @@ angular.module('mainCtrl', [])
             .success(function(data) {
               $scope.transactionData = {};
               // if successful, refresh positions and transactions
-              Transaction.get($scope.portfolio.id)
-                .success(function(getData) {
-                  $scope.transactions = getData;
-                  $scope.loading = false;
-                });
-               Position.get($scope.portfolio.id)
-                .success(function(getData) {
-                  $scope.positions = getData;
-                  $scope.loading = false;
-                });
-                Portfolio.show($scope.portfolio.id)
-                .success(function(data) {
-                  $scope.portfolio = data;
-                  $scope.loading = false;
-                });
-
-
+              getTransactions ($scope, $scope.portfolio.id, Transaction);
+              getPositions ($scope, $scope.portfolio.id, Position);
             })
             .error(function(data) {
               console.log(data);
@@ -147,3 +90,37 @@ angular.module('mainCtrl', [])
 
 
   });
+
+
+
+ function getPositions($scope, portfolioId, Position) {
+    Position.get(portfolioId)
+          .success(function(getData) {
+            $scope.positions = getData;
+            $scope.loading = false;
+    });
+ }
+
+ function getTransactions($scope, portfolioId, Transaction) {
+    Transaction.get(portfolioId)
+          .success(function(getData) {
+            $scope.transactions = getData;
+            $scope.loading = false;
+    });
+ }
+
+ function getPortfolio($scope, portfolioId, Portfolio) {
+    Portfolio.show(portfolioId)
+          .success(function(data) {
+            $scope.portfolio = data;
+            $scope.loading = false;
+    });
+ }
+
+ function getAllPortfolios($scope, Portfolio) {
+      Portfolio.get()
+           .success(function(data) {
+              $scope.portfolios = data;
+              $scope.loading = false;
+      });
+}

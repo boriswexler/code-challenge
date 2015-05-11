@@ -11,13 +11,13 @@
     body    { padding-top:30px; }
     form    { padding-bottom:20px; }
     .transaction  { padding-bottom:20px; }
-  </style>
+    </style>
 
-  <!-- JS -->
-  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
-  <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.8/angular.min.js"></script> <!-- load angular -->
-  <script src="js/assets/ui-bootstrap-tpls-0.13.0.min.js"></script>
-  
+    <!-- JS -->
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.8/angular.min.js"></script> <!-- load angular -->
+    <script src="js/assets/ui-bootstrap-tpls-0.13.0.min.js"></script>
+
     <script src="js/controllers/mainCtrl.js"></script> 
     <script src="js/services/portfolioService.js"></script> 
     <script src="js/app.js"></script> 
@@ -26,98 +26,101 @@
 
 <body class="container" ng-app="portfolioApp" ng-controller="mainController">
 
-
- 
-    <div class="page-header">
+<div class="page-header">
       <h2>Benzinga challenge portfolio</h2>
-     
+</div>
+
+<div class="row">
+    <div class="col-md-8 ">
+        <form ng-submit="getQuote()"> 
+            <div class="input-group">
+                <input type="text" class="form-control input-lg" name="symbol" ng-model="quoteRequest.symbol" placeholder="Enter a symbol">
+                <span class="input-group-btn">
+                    <button type="Submit" class="btn btn-primary btn-lg">Search</button>
+                </span>
+            </div>
+        </form>
+        <form ng-submit="submitTransaction()"> 
+
+            <div class="span4 text-center border-radius">
+                  <h3>{{ quote.name }} ({{ quote.symbol}})</h3> <br>
+                  <h4>Bid: {{ quote.bidPrice}}    Ask: {{ quote.askPrice}}</h4>
+            </div>
+
+            <div class="input-group">
+                <input type="number" class="form-control input-lg" name="num_shares" ng-model="transactionData.num_shares" placeholder="Enter number of shares">
+                <span class="input-group-btn">
+                    <button ng-click= "transactionData.transaction_type = 'S';transactionData.price =quote.bidPrice" value="sell" class="btn btn-danger btn-lg">Sell</button>
+
+                    <button ng-click= "transactionData.transation_type = 'B';transactionData.price =quote.askPrice" value="buy" class="btn btn-success btn-lg">Buy</button>
+                </span>
+            </div> 
+        </form>
+
+
+        <p class="text-center" ng-show="loading"><span class="fa fa-meh-o fa-5x fa-spin"></span></p>
+
+
+        <table class="table table-bordered" ng-hide="loading"> 
+            <tr ><td class="col-md-1 text-left"><b>Date</b></td>  
+                <td class="text-right col-md-1"><b> Type </b></td>  
+                <td class="text-right col-md-1"><b> Shares</b></td>  
+                <td class="text-right col-md-1"><b>Symbol</b> </td>  
+                <td class="text-right col-md-1"><b>Price</b> </td>
+            </tr>
+            <tr ng-repeat="transaction in transactions ">
+                <td class="col-md-1 text-left">{{ transaction.dates | date:'MM/dd/yyyy' }}</td>  
+                <td class="text-right col-md-1"> {{ transaction.transaction_type == 'B' ? 'Bought' : 'Sold' }} </td>  
+                <td class="text-right col-md-1"> {{ transaction.num_shares }}</td>  
+                <td class="text-right col-md-1">{{ transaction.symbol }} </t> 
+                <td class="text-right col-md-1">${{ transaction.price  | number:2}} </td>
+            </tr>
+        </table>
 
     </div>
-    
-    
+    <div class="col-md-4 "> 
+        <div class="row ">
 
-  <div class="row">
-  <div class="col-md-8 ">
-  <form ng-submit="getQuote()"> 
+            <div class="col-md-5 ">     
+                <li class="dropdown" dropdown >
+                    <a href="#" class="dropdown-toggle" dropdown-toggle role="button" aria-expanded="false">Portfolios <span class="caret"></span></a>
+                    <ul class="dropdown-menu dropdown-menu-left" role="menu">
+                        <li ng-repeat="portfolio in portfolios" ><a  ng-click="loadPortfolio(portfolio.id)">{{portfolio.name}}</a></li>
+                    </ul>
+                </li>
+            
+            </div>
 
-        <div class="input-group">
-          <input type="text" class="form-control input-lg" name="symbol" ng-model="quoteRequest.symbol" placeholder="Enter a symbol">
-          <span class="input-group-btn">
-            <button type="Submit" class="btn btn-primary btn-lg">Search</button>
-          </span>
-        </div>
-    </form>
-    <form ng-submit="submitTransaction()"> 
-
-      <div class="span4 text-center border-radius">
-      <h3>{{ quote.name }} ({{ quote.symbol}})</h3> <br>
-      <h4>Bid: {{ quote.bidPrice}}    Ask: {{ quote.askPrice}}</h4>
-      </div>
-
-      <div class="input-group">
-        <input type="number" class="form-control input-lg" name="num_shares" ng-model="transactionData.num_shares" placeholder="Enter number of shares">
-        <span class="input-group-btn">
-        <button ng-click= "transactionData.transaction_type = 'S';transactionData.price =quote.bidPrice" value="sell" class="btn btn-danger btn-lg">Sell</button>
-        
-        <button ng-click= "transactionData.transation_type = 'B';transactionData.price =quote.askPrice" value="buy" class="btn btn-success btn-lg">Buy</button>
-        </span>
-      </div> 
-    </form>
-
-  
-    <p class="text-center" ng-show="loading"><span class="fa fa-meh-o fa-5x fa-spin"></span></p>
-
-  
-    <table class="table table-bordered" ng-hide="loading"> 
-    <tr ><td class="col-md-1 text-left"><b>Date</b></td>  <td class="text-right col-md-1"><b> Type </b></td>  <td class="text-right col-md-1"><b> Shares</b></td>  <td class="text-right col-md-1"><b>Symbol</b> </td>  <td class="text-right col-md-1">
-     <b>Price</b> </td></tr>
-      <tr ng-repeat="transaction in transactions "><td class="col-md-1 text-left">{{ transaction.dates | date:'MM/dd/yyyy' }}</td>  <td class="text-right col-md-1"> {{ transaction.transaction_type == 'B' ? 'Bought' : 'Sold' }} </td>  <td class="text-right col-md-1"> {{ transaction.num_shares }}</td>  <td class="text-right col-md-1">{{ transaction.symbol }} </td>  <td class="text-right col-md-1">
-      ${{ transaction.price  | number:2}} </td></tr>
-
-    </table>
-
-</div>
-<div class="col-md-4 "> 
-<div class="row ">
-
- <div class="col-md-5 ">     
-    <li class="dropdown" dropdown >
-               <a href="#" class="dropdown-toggle" dropdown-toggle role="button" aria-expanded="false">Portfolios <span class="caret"></span></a>
-                            <ul class="dropdown-menu dropdown-menu-left" role="menu">
-                                <li ng-repeat="portfolio in portfolios" ><a  ng-click="loadPortfolio(portfolio.id)">{{portfolio.name}}</a></li>
-                            </ul>
-                        </li>
+            <div class="col-md-7 ">
+                <form> 
+                    <div class="input-group">
+                        <input type="text" class="form-control input-sm" name="name" ng-model="portfolioData.name" placeholder="New portfolio">
+                        <span class="input-group-btn">
+                           <button ng-click="createPortfolio()" class="btn btn-primary btn-sm">Create</button>
                         </span>
-</div>
-
-    <div class="col-md-7 ">
-    <form ng-submit="createPortfolio()"> 
-      <div class="input-group">
-            <input type="text" class="form-control input-sm" name="name" ng-model="portfolioData.name" placeholder="New portfolio">
-            <span class="input-group-btn">
-     <button type="Submit" class="btn btn-primary btn-sm">Create</button>
-
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div>
+            <h3>  {{portfolio.name}}</h3><br>
+            <h4>Cash balance: ${{ portfolio.balance  | number:2}}</h4>
+            <h3> <small>Positions </small></h3>
+            <p class="text-center" ng-show="loading"><span class="fa fa-meh-o fa-5x fa-spin"></span></p>
+            <table class="table table-bordered" ng-hide="loading">
+                <tr >
+                    <td class="col-md-1 text-left"><b>Symbol</b></td> 
+                    <td class="text-right col-md-1"><b>Shares</b></td>
+                    <td class="text-right col-md-1"> <b>Cost basis</b></td>
+                </tr>
+                <tr ng-repeat="position in positions">
+                    <td class="col-md-1 text-left">{{ position.symbol }}</td>  
+                    <td class="text-right col-md-1">{{ position.num_shares }}</td>
+                    <td class="text-right col-md-1"> {{ position.average_cost | number:2}}</td>
+                </tr>
+            </table>
+        </div>
     </div>
-       </form>
-    </div>
-    </div>
-
-
- <div>
-  <h3>  {{portfolio.name}}</h3><br>
-  <h4>Cash balance: ${{ portfolio.balance  | number:2}}</h4>
-  </div>
-  <h3> <small>Positions </small></h3>
-    <p class="text-center" ng-show="loading"><span class="fa fa-meh-o fa-5x fa-spin"></span></p>
-
-    
-    <table class="table table-bordered" ng-hide="loading">
-    <tr ><td class="col-md-1 text-left"><b>Symbol</b></td>  <td class="text-right col-md-1"><b>Shares</b></td><td class="text-right col-md-1"> <b>Cost basis</b></td></tr>
-      <tr ng-repeat="position in positions"><td class="col-md-1 text-left">{{ position.symbol }}</td>  <td class="text-right col-md-1">{{ position.num_shares }}</td><td class="text-right col-md-1"> {{ position.average_cost | number:2}}</td></tr>
-
-    </table>
-</div>
-
 </div>
 </body>
 </html>

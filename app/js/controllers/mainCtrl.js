@@ -65,13 +65,16 @@ angular.module('mainCtrl', [])
       positionsym = $scope.positions.filter(function (position) { return position.symbol == $scope.transactionData.symbol });
       if($scope.transactionData.num_shares <= 0 || !$scope.transactionData.num_shares) {
           alert('Number of shares needs to be greater than zero.')
+          $scope.transactionData = {};
       }
       else if($scope.transactionData.transaction_type == 'S' &&
                 (positionsym[0].num_shares < $scope.transactionData.num_shares))   {
           alert('You can not sell more shares than you currently own')
+          $scope.transactionData = {};
       } 
       else if ($scope.transactionData.num_shares * $scope.transactionData.price > $scope.portfolio.balance) {
           alert('Your cash balance does not allow for this transaction')
+          $scope.transactionData = {};
       }
       else {
           $scope.loading = true;

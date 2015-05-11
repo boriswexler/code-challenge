@@ -88,6 +88,7 @@ angular.module('mainCtrl', [])
               // if successful, refresh positions and transactions
               getTransactions ($scope, $scope.portfolio.id, Transaction);
               getPositions ($scope, $scope.portfolio.id, Position);
+              getPortfolio($scope, $scope.portfolio.id, Portfolio);
             })
             .error(function(data) {
               console.log(data);
